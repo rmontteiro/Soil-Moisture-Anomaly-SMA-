@@ -12,6 +12,12 @@ Aplicação JavaScript para o Code Editor do Google Earth Engine. O arquivo `sma
 
 Não há servidor local, dependências npm ou rotina de build. Node.js pode verificar a sintaxe (`node --check smap_soil_moisture.js`), mas não executa os objetos globais `ee`, `ui`, `Map`, `Export` e `print` do Earth Engine.
 
+## Camada de entrada: municípios do Espírito Santo
+
+[Abrir MUNICIPIOS_ES no Google Earth Engine](https://code.earthengine.google.com/?asset=projects/ee-aguascapixabas/assets/MUNICIPIOS_ES)
+
+Asset: `projects/ee-aguascapixabas/assets/MUNICIPIOS_ES`. A aplicação usa o campo `nome` para listar e selecionar municípios. O autor informa que essa camada é compartilhada publicamente. A inclusão deste link no repositório não altera as permissões do asset; o acesso é controlado no Earth Engine.
+
 ## Fonte e perfis
 
 Coleção: `NASA/SMAP/SPL4SMGP/008`. São usadas as bandas `sm_rootzone` (zona radicular) e `sm_profile` (perfil total), individualmente ou em conjunto. A banda superficial não é utilizada. A umidade é expressa em m³/m³. Os dois perfis representam volumes de solo sobrepostos; o script não calcula uma camada profunda independente por subtração.
