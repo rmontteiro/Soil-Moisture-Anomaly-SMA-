@@ -1,6 +1,54 @@
 # Anomalias de umidade do solo — SMAP L4 / Brasil
 
+[Português](README.md) | [English](README.en.md) | [Español](README.es.md)
+
 Aplicação JavaScript para o Code Editor do Google Earth Engine. O arquivo `smap_soil_moisture.js` preserva integralmente o código fornecido pelo autor.
+
+## Exemplos de operação — outubro de 2026
+
+Capturas da aplicação para **São Paulo (SP), Rio de Janeiro (RJ), Minas Gerais (MG) e Espírito Santo (ES)**, com data solicitada de **10/10/2026**, referência **2015–2025** e **P50**. Clique em uma imagem para abri-la em tamanho completo.
+
+### São Paulo — SP
+
+**10/10/2026 · Zona radicular · Variação percentual em relação ao P50 de 2015–2025**
+
+[![Umidade do solo em São Paulo (SP): zona radicular, variação percentual em relação ao P50, data solicitada 10/10/2026](Captura%20de%20tela%20de%202026-11-01%2008-31-43.png)](Captura%20de%20tela%20de%202026-11-01%2008-31-43.png)
+
+### Rio de Janeiro — RJ
+
+**10/10/2026 · Zona radicular · Variação percentual em relação ao P50 de 2015–2025**
+
+[![Umidade do solo em Rio de Janeiro (RJ): zona radicular, variação percentual em relação ao P50, data solicitada 10/10/2026](Captura%20de%20tela%20de%202026-11-01%2008-22-54.png)](Captura%20de%20tela%20de%202026-11-01%2008-22-54.png)
+
+### Minas Gerais — MG
+
+**10/10/2026 · Zona radicular · Variação percentual em relação ao P50 de 2015–2025**
+
+[![Umidade do solo em Minas Gerais (MG): zona radicular, variação percentual em relação ao P50, data solicitada 10/10/2026](Captura%20de%20tela%20de%202026-11-01%2008-33-31.png)](Captura%20de%20tela%20de%202026-11-01%2008-33-31.png)
+
+### Espírito Santo — ES
+
+**10/10/2026 · Zona radicular · Variação percentual em relação ao P50 de 2015–2025**
+
+[![Umidade do solo em Espírito Santo (ES): zona radicular, variação percentual em relação ao P50, data solicitada 10/10/2026](Captura%20de%20tela%20de%202026-11-01%2008-30-46.png)](Captura%20de%20tela%20de%202026-11-01%2008-30-46.png)
+
+### Configuração dos exemplos
+
+| Parâmetro | Valor para reproduzir os exemplos |
+| --- | --- |
+| Aplicação | `smap_soil_moisture_brasil.js` |
+| Data final solicitada | 10/10/2026 |
+| Área | Todo o estado, repetindo a execução para SP, RJ, MG e ES |
+| Referência histórica | 2015–2025 |
+| Percentil de referência | P50 |
+| Perfil | Zona radicular (`sm_rootzone`) |
+| Produto no mapa | Zona radicular — variação % vs P50 — original |
+| Preenchimento de lacunas | Produto original, sem imputação espacial |
+
+O P50 corresponde à **mediana histórica das médias de janelas equivalentes**, e não à média histórica. A condição de outubro de 2026 é a média das imagens válidas desde 01/10/2026 até a última observação disponível dentro do período solicitado. A variação exibida é `100 × (média observada − P50 histórico) / P50 histórico`. Abaixo de zero indica umidade inferior à referência; acima de zero, superior.
+
+As capturas mostram a data solicitada. O instante da última observação efetivamente utilizada não aparece nas imagens; consulte o Console/status da execução.
+
 
 ## Versão nacional
 
@@ -15,69 +63,6 @@ Os estados são apresentados como sigla e nome e processados pela sigla. A UF in
 **Agregação territorial:** em Todo o estado, a geometria vem do asset estadual e a tabela/CSV contém uma linha estadual, identificada por `Tipo_Area = Estado`. Em um município, a geometria vem do asset municipal e a tabela contém o resultado municipal. A versão nacional não gera automaticamente todas as linhas municipais ao escolher um estado inteiro. Isso permite analisar o limite estadual completo mesmo com cobertura municipal parcial. Metadados incluem UF e tipo de área; nomes de exportação incluem a sigla da UF. O limite operacional da redução foi ampliado para 20 milhões de pixels por região para acomodar estados extensos; a análise estadual pode demandar mais tempo e recursos.
 
 Os cálculos científicos, as bandas, o preenchimento e os controles de exportação foram preservados. A sintaxe e o comportamento dos seletores foram verificados localmente com simulação das APIs da interface, incluindo respostas fora de ordem, ausência de municípios e falha de carregamento. Essas verificações não executam processamento geoespacial no Earth Engine. A nova versão ainda requer validação autenticada dos assets, mapas, estatísticas e tarefas CSV/GeoTIFF; a execução confirmada pelo autor refere-se à versão original do ES.
-
-## Exemplos de operação — outubro de 2026
-
-Espaços reservados para capturas dos resultados estaduais de **São Paulo (SP), Rio de Janeiro (RJ), Minas Gerais (MG) e Espírito Santo (ES)**. As imagens serão inseridas manualmente pelo autor no GitHub; ainda não há resultados ilustrados nesta seção.
-
-### Configuração dos exemplos
-
-| Parâmetro | Valor para reproduzir os exemplos |
-| --- | --- |
-| Aplicação | `smap_soil_moisture_brasil.js` |
-| Data final solicitada | 31/10/2026 |
-| Área | Todo o estado, repetindo a execução para SP, RJ, MG e ES |
-| Referência histórica | 2015–2025 |
-| Percentil de referência | P50 |
-| Perfil | Perfil total (`sm_profile`) |
-| Produto no mapa | Perfil total — variação % vs P50 — original |
-| Preenchimento de lacunas | Desativado para as capturas abaixo |
-
-O P50 corresponde à **mediana histórica das médias de janelas equivalentes**, e não à média histórica. A condição de outubro de 2026 é a média das imagens válidas desde 01/10/2026 até a última observação disponível dentro do período solicitado. A variação exibida é `100 × (média observada − P50 histórico) / P50 histórico`. Abaixo de zero indica umidade inferior à referência; acima de zero, superior.
-
-Ao adicionar cada captura, mantenha a legenda e o painel de parâmetros visíveis. Registre a última observação efetivamente utilizada, pois a seleção de 31/10/2026 não garante que o produto já contenha dados até esse dia. Se usar outro histórico, perfil ou preenchimento, atualize a configuração acima e as legendas correspondentes.
-
-Para inserir as imagens, edite este README no GitHub e arraste a captura para o espaço do estado correspondente. O GitHub gerará o endereço da imagem; substitua o texto de reserva por esse Markdown.
-
-### São Paulo — SP
-
-**Outubro/2026 · Perfil total · Variação percentual em relação ao P50 de 2015–2025**
-
-_Inserir aqui a imagem do resultado para São Paulo._
-
-<!-- SP: inserir aqui o Markdown da imagem enviado pelo GitHub. -->
-
-Última observação utilizada: _preencher após a execução_.
-
-### Rio de Janeiro — RJ
-
-**Outubro/2026 · Perfil total · Variação percentual em relação ao P50 de 2015–2025**
-
-_Inserir aqui a imagem do resultado para o Rio de Janeiro._
-
-<!-- RJ: inserir aqui o Markdown da imagem enviado pelo GitHub. -->
-
-Última observação utilizada: _preencher após a execução_.
-
-### Minas Gerais — MG
-
-**Outubro/2026 · Perfil total · Variação percentual em relação ao P50 de 2015–2025**
-
-_Inserir aqui a imagem do resultado para Minas Gerais._
-
-<!-- MG: inserir aqui o Markdown da imagem enviado pelo GitHub. -->
-
-Última observação utilizada: _preencher após a execução_.
-
-### Espírito Santo — ES
-
-**Outubro/2026 · Perfil total · Variação percentual em relação ao P50 de 2015–2025**
-
-_Inserir aqui a imagem do resultado para o Espírito Santo._
-
-<!-- ES: inserir aqui o Markdown da imagem enviado pelo GitHub. -->
-
-Última observação utilizada: _preencher após a execução_.
 
 ## Execução da versão original
 

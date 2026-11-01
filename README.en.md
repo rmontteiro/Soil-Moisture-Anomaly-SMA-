@@ -1,6 +1,54 @@
 # Soil moisture anomalies — SMAP L4 / Brazil
 
+[Português](README.md) | [English](README.en.md) | [Español](README.es.md)
+
 JavaScript application for the Google Earth Engine Code Editor. The `smap_soil_moisture.js` file preserves the code supplied by the author in full.
+
+## Operation examples — October 2026
+
+Application screenshots for **São Paulo (SP), Rio de Janeiro (RJ), Minas Gerais (MG), and Espírito Santo (ES)**, with a requested date of **10/10/2026**, a **2015–2025** reference period, and **P50**. Click an image to open it at full size.
+
+### São Paulo — SP
+
+**10/10/2026 · Root zone · Percentage change relative to the 2015–2025 P50**
+
+[![Soil moisture in São Paulo (SP): root zone, percentage change relative to P50, requested date 10/10/2026](Captura%20de%20tela%20de%202026-11-01%2008-31-43.png)](Captura%20de%20tela%20de%202026-11-01%2008-31-43.png)
+
+### Rio de Janeiro — RJ
+
+**10/10/2026 · Root zone · Percentage change relative to the 2015–2025 P50**
+
+[![Soil moisture in Rio de Janeiro (RJ): root zone, percentage change relative to P50, requested date 10/10/2026](Captura%20de%20tela%20de%202026-11-01%2008-22-54.png)](Captura%20de%20tela%20de%202026-11-01%2008-22-54.png)
+
+### Minas Gerais — MG
+
+**10/10/2026 · Root zone · Percentage change relative to the 2015–2025 P50**
+
+[![Soil moisture in Minas Gerais (MG): root zone, percentage change relative to P50, requested date 10/10/2026](Captura%20de%20tela%20de%202026-11-01%2008-33-31.png)](Captura%20de%20tela%20de%202026-11-01%2008-33-31.png)
+
+### Espírito Santo — ES
+
+**10/10/2026 · Root zone · Percentage change relative to the 2015–2025 P50**
+
+[![Soil moisture in Espírito Santo (ES): root zone, percentage change relative to P50, requested date 10/10/2026](Captura%20de%20tela%20de%202026-11-01%2008-30-46.png)](Captura%20de%20tela%20de%202026-11-01%2008-30-46.png)
+
+### Example settings
+
+| Parameter | Value for reproducing the examples |
+| --- | --- |
+| Application | `smap_soil_moisture_brasil.js` |
+| Requested end date | 10/10/2026 |
+| Area | Todo o estado (entire state), repeating execution for SP, RJ, MG, and ES |
+| Historical reference | 2015–2025 |
+| Reference percentile | P50 |
+| Profile | Zona radicular (root zone, `sm_rootzone`) |
+| Map product | Zona radicular — variação % vs P50 — original (root zone — % change vs P50 — original) |
+| Gap filling | Original product, without spatial imputation |
+
+P50 corresponds to the **historical median of equivalent-window means**, rather than the historical mean. The October 2026 condition is the mean of valid images from 01/10/2026 to the latest observation available within the requested period. The displayed change is `100 × (média observada − P50 histórico) / P50 histórico` (100 × (observed mean − historical P50) / historical P50). Below zero indicates moisture below the reference; above zero indicates moisture above it.
+
+The screenshots show the requested date. The timestamp of the latest observation actually used is not visible in the images; check the execution Console/status.
+
 
 ## National version
 
@@ -15,69 +63,6 @@ States are displayed by abbreviation and name and processed by abbreviation. The
 **Territorial aggregation:** under Todo o estado, the geometry comes from the state asset and the table/CSV contains one state row, identified by `Tipo_Area = Estado`. For a municipality, the geometry comes from the municipal asset and the table contains the municipal result. The national version does not automatically generate all municipal rows when an entire state is selected. This allows the full state boundary to be analyzed even with partial municipal coverage. Metadata include the state and area type; export names include the state abbreviation. The operational reduction limit was increased to 20 million pixels per region to accommodate large states; state analysis may require more time and resources.
 
 The scientific calculations, bands, gap filling, and export controls have been preserved. Selector syntax and behavior were checked locally using simulated interface APIs, including out-of-order responses, missing municipalities, and loading failures. These checks do not perform geospatial processing in Earth Engine. The new version still requires authenticated validation of assets, maps, statistics, and CSV/GeoTIFF tasks; the execution confirmed by the author refers to the original ES version.
-
-## Operation examples — October 2026
-
-Reserved spaces for screenshots of state results for **São Paulo (SP), Rio de Janeiro (RJ), Minas Gerais (MG), and Espírito Santo (ES)**. The author will manually insert the images on GitHub; this section does not yet contain illustrated results.
-
-### Example settings
-
-| Parameter | Value for reproducing the examples |
-| --- | --- |
-| Application | `smap_soil_moisture_brasil.js` |
-| Requested end date | 31/10/2026 |
-| Area | Todo o estado (entire state), repeating execution for SP, RJ, MG, and ES |
-| Historical reference | 2015–2025 |
-| Reference percentile | P50 |
-| Profile | Perfil total (full profile, `sm_profile`) |
-| Map product | Perfil total — variação % vs P50 — original (full profile — % change vs P50 — original) |
-| Gap filling | Disabled for the screenshots below |
-
-P50 corresponds to the **historical median of equivalent-window means**, rather than the historical mean. The October 2026 condition is the mean of valid images from 01/10/2026 to the latest observation available within the requested period. The displayed change is `100 × (média observada − P50 histórico) / P50 histórico` (100 × (observed mean − historical P50) / historical P50). Below zero indicates moisture below the reference; above zero indicates moisture above it.
-
-When adding each screenshot, keep the legend and parameter panel visible. Record the latest observation actually used, since selecting 31/10/2026 does not guarantee that the product already contains data through that date. If you use a different historical period, profile, or gap-filling setting, update the settings above and the corresponding captions.
-
-To insert images, edit this README on GitHub and drag the screenshot into the space for the corresponding state. GitHub will generate the image address; replace the placeholder text with that Markdown.
-
-### São Paulo — SP
-
-**October/2026 · Full profile · Percentage change relative to the 2015–2025 P50**
-
-_Insert the result image for São Paulo here._
-
-<!-- SP: insert the image Markdown provided by GitHub here. -->
-
-Latest observation used: _fill in after execution_.
-
-### Rio de Janeiro — RJ
-
-**October/2026 · Full profile · Percentage change relative to the 2015–2025 P50**
-
-_Insert the result image for Rio de Janeiro here._
-
-<!-- RJ: insert the image Markdown provided by GitHub here. -->
-
-Latest observation used: _fill in after execution_.
-
-### Minas Gerais — MG
-
-**October/2026 · Full profile · Percentage change relative to the 2015–2025 P50**
-
-_Insert the result image for Minas Gerais here._
-
-<!-- MG: insert the image Markdown provided by GitHub here. -->
-
-Latest observation used: _fill in after execution_.
-
-### Espírito Santo — ES
-
-**October/2026 · Full profile · Percentage change relative to the 2015–2025 P50**
-
-_Insert the result image for Espírito Santo here._
-
-<!-- ES: insert the image Markdown provided by GitHub here. -->
-
-Latest observation used: _fill in after execution_.
 
 ## Running the original version
 
