@@ -1,0 +1,72 @@
+# Anomalias de umidade do solo — SMAP L4 / Espírito Santo
+
+Aplicação JavaScript para o Code Editor do Google Earth Engine. O arquivo `smap_soil_moisture.js` preserva integralmente o código fornecido pelo autor.
+
+## Execução
+
+1. Abra https://code.earthengine.google.com/ com uma conta e um projeto habilitados para Earth Engine.
+2. Copie o conteúdo de `smap_soil_moisture.js` para um script no editor.
+3. Garanta acesso ao asset `projects/ee-aguascapixabas/assets/MUNICIPIOS_ES`, cujo campo municipal deve ser `nome`.
+4. Execute o script, configure data, histórico, município, percentil e perfil; clique em **PROCESSAR**.
+5. Consulte os produtos no seletor e os diagnósticos no Console. Quando selecionadas, as exportações criam tarefas na aba Tasks, que precisam ser iniciadas para gravar no Google Drive, na pasta `GEE_Exportacoes`.
+
+Não há servidor local, dependências npm ou rotina de build. Node.js pode verificar a sintaxe (`node --check smap_soil_moisture.js`), mas não executa os objetos globais `ee`, `ui`, `Map`, `Export` e `print` do Earth Engine.
+
+## Fonte e perfis
+
+Coleção: `NASA/SMAP/SPL4SMGP/008`. São usadas as bandas `sm_rootzone` (zona radicular) e `sm_profile` (perfil total), individualmente ou em conjunto. A banda superficial não é utilizada. A umidade é expressa em m³/m³. Os dois perfis representam volumes de solo sobrepostos; o script não calcula uma camada profunda independente por subtração.
+
+Referência do produto: https://developers.google.com/earth-engine/datasets/catalog/NASA_SMAP_SPL4SMGP_008?hl=pt-br
+
+## Método implementado
+
+Os cálculos abaixo são feitos por pixel e por banda, antes da agregação municipal.
+
+1. **Janela atual:** começa no primeiro dia do mês escolhido, à meia-noite UTC. A busca inclui o dia selecionado, pois o limite exclusivo de `filterDate` é o dia seguinte. Dentro dessa busca, identifica a imagem com o maior `system:time_start`. O fim efetivo passa a ser esse instante mais um segundo, para incluir a última imagem. Portanto, a análise é acumulada desde o início do mês, não uma observação isolada do dia escolhido.
+2. **Condição observada:** média aritmética das imagens válidas na janela efetiva, sem ponderação por duração. A contagem é calculada por pixel e banda.
+3. **Referência histórica:** para cada ano do intervalo inclusivo selecionado, começa no primeiro dia do mesmo mês e avança exatamente a duração da janela atual, em segundos. Calcula uma média por ano. Anos sem imagens recebem uma imagem totalmente mascarada; não recebem umidade zero. A disponibilidade parcial de um ano não é rejeitada.
+4. **Limiar histórico:** aplica `ee.Reducer.percentile` às médias anuais, com P10, P20, …, P90. O padrão é P50. Cada média anual válida tem o mesmo peso, independentemente de sua quantidade de imagens. Esse é um percentil entre médias anuais de janelas equivalentes, não o percentil de todas as imagens históricas agrupadas.
+5. **Diferença absoluta:** `D = O - R`, em m³/m³, sendo O a média observada e R o percentil histórico escolhido.
+6. **Variação relativa:** `V = 100 × (O - R) / R`. Pixels com referência menor ou igual a zero são mascarados. Valores negativos indicam condição abaixo do limiar escolhido; positivos, acima. Exemplo: O = 0,20 e R = 0,25 resultam em D = −0,05 m³/m³ e V = −20%. Não se trata de anomalia padronizada por desvio-padrão.
+7. **Posição percentílica empírica:** `100 × média(H_y <= O)` entre os anos válidos. Empates contam como menores ou iguais. Este indicador é distinto do percentil escolhido como referência.
+8. **Cobertura:** registra a quantidade de imagens atuais válidas e o número de médias anuais históricas válidas por pixel. O tamanho total da coleção histórica impresso no Console inclui também os anos representados por imagens vazias; não substitui a contagem válida por pixel.
+
+A interface permite análises a partir de 2016 e referências desde 2015, terminando antes do ano da análise. O histórico inicial padrão é 2015 até o ano anterior ao atual. Se não houver imagens na janela solicitada, o processamento é interrompido. Uma janela de mesma duração em segundos pode ultrapassar o fim de fevereiro ao ser transportada entre anos bissextos e não bissextos.
+
+## Área, preenchimento e apresentação
+
+A seleção estadual mantém todos os municípios como feições separadas; a tabela continua sendo municipal. A geometria de visualização e exportação é simplificada com tolerância de 1.000 m e recebe buffer de 8.000 m. Portanto, os rasters incluem uma faixa externa à área selecionada. A redução municipal usa as feições originais.
+
+O preenchimento opcional atua somente na variação percentual, após seu recorte à geometria expandida. Usa médias focais circulares progressivas de 15, 30 e 60 km, com `unmask`: preserva valores originalmente válidos e tenta preencher lacunas. Etapas posteriores podem utilizar valores estimados nas anteriores. Não reconstrói observações físicas nem garante o preenchimento de todas as lacunas. Máscaras separadas permitem visualizar pixels imputados e lacunas remanescentes.
+
+O seletor oferece umidade observada, limiar histórico, variação original, posição percentílica, contagem de observações e, se ativada, variação preenchida. A diferença absoluta e a contagem histórica são consolidadas nas saídas, mas não possuem produto próprio no seletor. A variação exibida usa uma rampa contínua de −50% a +50%; os dados não são truncados nesses valores. As faixas textuais da legenda não são uma reclassificação discreta do raster.
+
+## Tabela e exportações
+
+Cada perfil gera as bandas abaixo (`rz` para zona radicular ou `pf` para perfil total):
+
+| Sufixo | Conteúdo |
+| --- | --- |
+| `_obs_m3m3` | Média observada |
+| `_ref_P{p}_m3m3` | Percentil histórico escolhido |
+| `_diff_m3m3` | Diferença absoluta |
+| `_var_pct` | Variação percentual original |
+| `_rank_pct` | Posição percentílica empírica |
+| `_obs_n` | Contagem de imagens atuais válidas |
+| `_hist_n` | Contagem de médias anuais válidas |
+| `_var_pct_filled` | Variação preenchida, se ativada |
+
+A tabela aplica `mean().unweighted()` a cada banda com `reduceRegions`, escala solicitada de 3.000 m, projeção obtida da imagem consolidada, `tileScale: 16` e `maxPixelsPerRegion: 100000`. Os valores de contagem na tabela são médias espaciais e podem ser fracionários. A média municipal das variações por pixel não equivale necessariamente à variação calculada a partir das médias municipais de O e R.
+
+**Comportamento efetivo:** a imagem consolidada inclui a banda preenchida quando ativada; por isso a tabela e o CSV também contêm a média dessa banda, além das bandas originais. Isso qualifica o comentário inicial de que as estatísticas usam dados originais: os indicadores originais são preservados, mas há também uma estatística complementar imputada.
+
+O CSV remove a geometria e mantém propriedades e metadados municipais. O GeoTIFF exporta as bandas consolidadas na geometria expandida, com escala solicitada de 11.000 m, `maxPixels: 1e9` e opção Cloud Optimized. As máscaras de imputação e lacunas são overlays, não bandas explicitamente adicionadas ao arquivo exportado. Os nomes dos arquivos usam a data solicitada; a data efetiva da última imagem é apresentada no Console/status, mas não é adicionada como metadado específico da tabela ou do raster.
+
+## Limitações e validação
+
+- As escalas de 3.000 m e 11.000 m são parâmetros operacionais do script. A amostragem municipal a 3 km não cria informação física nessa resolução. O código não fixa explicitamente uma grade nativa com `crsTransform`; a projeção das imagens reduzidas merece conferência no Earth Engine.
+- O script não aplica filtros adicionais de qualidade, cobertura mínima temporal ou quantidade mínima de anos válidos. Consulte as contagens antes de interpretar os resultados, especialmente em janelas históricas incompletas.
+- Não há tratamento explícito dos erros retornados pelos callbacks de `evaluate`, nem bloqueio de cliques concorrentes em PROCESSAR.
+- A checagem local de sintaxe não valida acesso ao asset, comportamento das APIs, projeções, renderização ou compatibilidade dos tipos de bandas no GeoTIFF. Essas verificações exigem execução autenticada no Earth Engine e conclusão das tarefas de exportação.
+
+O código original foi incorporado sem correções metodológicas ou mudanças de interface. Esta documentação descreve a implementação por inspeção; não constitui validação científica dos resultados.
