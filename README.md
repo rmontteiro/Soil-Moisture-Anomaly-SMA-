@@ -1,8 +1,85 @@
-# Anomalias de umidade do solo — SMAP L4 / Espírito Santo
+# Anomalias de umidade do solo — SMAP L4 / Brasil
 
 Aplicação JavaScript para o Code Editor do Google Earth Engine. O arquivo `smap_soil_moisture.js` preserva integralmente o código fornecido pelo autor.
 
-## Execução
+## Versão nacional
+
+O arquivo [`smap_soil_moisture_brasil.js`](smap_soil_moisture_brasil.js) adapta a aplicação para seleção de UF e, em seguida, **Todo o estado** ou um município. Copie esse arquivo completo para o Code Editor. A versão original do Espírito Santo permanece em `smap_soil_moisture.js`.
+
+- Estados: [`projects/ee-aguascapixabas/assets/BR_UF_2022`](https://code.earthengine.google.com/?asset=projects/ee-aguascapixabas/assets/BR_UF_2022), com `NM_UF` e `SIGLA_UF`.
+- Municípios: [`projects/ee-aguascapixabas/assets/BR_Municipios_2022`](https://code.earthengine.google.com/?asset=projects/ee-aguascapixabas/assets/BR_Municipios_2022), configurado em `ROI_ASSET`, com campo `NM_MUN`. A base nacional foi indicada pelo autor. A presença de `SIGLA_UF` nessa coleção é detectada pelo código; o acesso e o esquema ainda precisam ser verificados na execução autenticada.
+- Se os municípios tiverem `SIGLA_UF`, esse campo será usado para filtrar pela UF selecionada. Sem esse campo, a associação usa o centroide municipal contido no limite estadual; confira a associação em casos de geometrias fragmentadas ou limites divergentes.
+
+Os estados são apresentados como sigla e nome e processados pela sigla. A UF inicial é ES, quando disponível. A lista municipal carrega somente a UF selecionada e descarta respostas antigas quando o usuário troca rapidamente de estado. Sem municípios disponíveis ou diante de erro no asset municipal, a interface informa o problema e mantém a análise estadual disponível.
+
+**Agregação territorial:** em Todo o estado, a geometria vem do asset estadual e a tabela/CSV contém uma linha estadual, identificada por `Tipo_Area = Estado`. Em um município, a geometria vem do asset municipal e a tabela contém o resultado municipal. A versão nacional não gera automaticamente todas as linhas municipais ao escolher um estado inteiro. Isso permite analisar o limite estadual completo mesmo com cobertura municipal parcial. Metadados incluem UF e tipo de área; nomes de exportação incluem a sigla da UF. O limite operacional da redução foi ampliado para 20 milhões de pixels por região para acomodar estados extensos; a análise estadual pode demandar mais tempo e recursos.
+
+Os cálculos científicos, as bandas, o preenchimento e os controles de exportação foram preservados. A sintaxe e o comportamento dos seletores foram verificados localmente com simulação das APIs da interface, incluindo respostas fora de ordem, ausência de municípios e falha de carregamento. Essas verificações não executam processamento geoespacial no Earth Engine. A nova versão ainda requer validação autenticada dos assets, mapas, estatísticas e tarefas CSV/GeoTIFF; a execução confirmada pelo autor refere-se à versão original do ES.
+
+## Exemplos de operação — outubro de 2026
+
+Espaços reservados para capturas dos resultados estaduais de **São Paulo (SP), Rio de Janeiro (RJ), Minas Gerais (MG) e Espírito Santo (ES)**. As imagens serão inseridas manualmente pelo autor no GitHub; ainda não há resultados ilustrados nesta seção.
+
+### Configuração dos exemplos
+
+| Parâmetro | Valor para reproduzir os exemplos |
+| --- | --- |
+| Aplicação | `smap_soil_moisture_brasil.js` |
+| Data final solicitada | 31/10/2026 |
+| Área | Todo o estado, repetindo a execução para SP, RJ, MG e ES |
+| Referência histórica | 2015–2025 |
+| Percentil de referência | P50 |
+| Perfil | Perfil total (`sm_profile`) |
+| Produto no mapa | Perfil total — variação % vs P50 — original |
+| Preenchimento de lacunas | Desativado para as capturas abaixo |
+
+O P50 corresponde à **mediana histórica das médias de janelas equivalentes**, e não à média histórica. A condição de outubro de 2026 é a média das imagens válidas desde 01/10/2026 até a última observação disponível dentro do período solicitado. A variação exibida é `100 × (média observada − P50 histórico) / P50 histórico`. Abaixo de zero indica umidade inferior à referência; acima de zero, superior.
+
+Ao adicionar cada captura, mantenha a legenda e o painel de parâmetros visíveis. Registre a última observação efetivamente utilizada, pois a seleção de 31/10/2026 não garante que o produto já contenha dados até esse dia. Se usar outro histórico, perfil ou preenchimento, atualize a configuração acima e as legendas correspondentes.
+
+Para inserir as imagens, edite este README no GitHub e arraste a captura para o espaço do estado correspondente. O GitHub gerará o endereço da imagem; substitua o texto de reserva por esse Markdown.
+
+### São Paulo — SP
+
+**Outubro/2026 · Perfil total · Variação percentual em relação ao P50 de 2015–2025**
+
+_Inserir aqui a imagem do resultado para São Paulo._
+
+<!-- SP: inserir aqui o Markdown da imagem enviado pelo GitHub. -->
+
+Última observação utilizada: _preencher após a execução_.
+
+### Rio de Janeiro — RJ
+
+**Outubro/2026 · Perfil total · Variação percentual em relação ao P50 de 2015–2025**
+
+_Inserir aqui a imagem do resultado para o Rio de Janeiro._
+
+<!-- RJ: inserir aqui o Markdown da imagem enviado pelo GitHub. -->
+
+Última observação utilizada: _preencher após a execução_.
+
+### Minas Gerais — MG
+
+**Outubro/2026 · Perfil total · Variação percentual em relação ao P50 de 2015–2025**
+
+_Inserir aqui a imagem do resultado para Minas Gerais._
+
+<!-- MG: inserir aqui o Markdown da imagem enviado pelo GitHub. -->
+
+Última observação utilizada: _preencher após a execução_.
+
+### Espírito Santo — ES
+
+**Outubro/2026 · Perfil total · Variação percentual em relação ao P50 de 2015–2025**
+
+_Inserir aqui a imagem do resultado para o Espírito Santo._
+
+<!-- ES: inserir aqui o Markdown da imagem enviado pelo GitHub. -->
+
+Última observação utilizada: _preencher após a execução_.
+
+## Execução da versão original
 
 1. Abra https://code.earthengine.google.com/ com uma conta e um projeto habilitados para Earth Engine.
 2. Copie o conteúdo de `smap_soil_moisture.js` para um script no editor.
