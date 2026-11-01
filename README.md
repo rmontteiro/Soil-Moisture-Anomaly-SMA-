@@ -1,5 +1,7 @@
 # Anomalias de umidade do solo — SMAP L4 / Brasil
 
+[Licença de uso e não alteração](LICENSE) — uso livre e gratuito; alterações e obras derivadas exigem autorização expressa e escrita do autor.
+
 [Português](README.md) | [English](README.en.md) | [Español](README.es.md)
 
 Aplicação JavaScript para o Code Editor do Google Earth Engine. O arquivo `smap_soil_moisture.js` preserva integralmente o código fornecido pelo autor.

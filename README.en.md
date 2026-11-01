@@ -1,5 +1,7 @@
 # Soil moisture anomalies — SMAP L4 / Brazil
 
+[Use and No-Modification License](LICENSE) — free use and access; modifications and derivative works require the author's express written authorization.
+
 [Português](README.md) | [English](README.en.md) | [Español](README.es.md)
 
 JavaScript application for the Google Earth Engine Code Editor. The `smap_soil_moisture.js` file preserves the code supplied by the author in full.
